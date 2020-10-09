@@ -1,5 +1,4 @@
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support import expected_conditions
 
 from ui.locators.locators import DashboardLocators
 from ui.pages.base_page import BasePage
@@ -11,6 +10,7 @@ class DashboardPage(BasePage):
     locators = DashboardLocators()
 
     def go_to_new_campaign(self):
+        """ Переход на страницу создания кампании """
         try:
             self.click(self.locators.CREATE_NEW_CAMPAIGN_BUTTON)
         except TimeoutException:
@@ -19,11 +19,13 @@ class DashboardPage(BasePage):
         return CreateNewCampaignPage(self.driver)
 
     def go_to_segments_list(self):
+        """ Переход к списку сегментов """
         self.click(self.locators.SEGMENTS_LIST_BUTTON)
         return SegmentsListPage(self.driver)
 
     def check_if_campaign_exists(self, campaign_title: str):
+        """ Проверка существования кампании """
         self.send_keys(self.locators.SEARCH_FIELD, campaign_title)
 
-        # A campaign exists if search suggestions box is shown
+        # Кампания существует если suggestions box отображается
         self.find(self.locators.SEARCH_SUGGESTIONS_BOX)

@@ -12,10 +12,12 @@ class BasePage:
     def __init__(self, driver):
         self.driver: webdriver = driver
 
-    def find(self, locator, timeout=10) -> WebElement:
+    def find(self, locator, timeout=15) -> WebElement:
+        """ Поиск элемента на странице """
         return self.wait(timeout).until(EC.presence_of_element_located(locator))
 
-    def click(self, locator, timeout=10):
+    def click(self, locator, timeout=15):
+        """ Клик по элементу """
         for i in range(CLICK_RETRY_COUNT):
             try:
                 self.find(locator)
@@ -28,10 +30,12 @@ class BasePage:
                     pass
         raise
 
-    def wait(self, timeout=10):
+    def wait(self, timeout=15):
+        """ Явное ожидание """
         return WebDriverWait(self.driver, timeout)
 
     def send_keys(self, locator, keys, timeout=10, to_clear=True, should_be_visible=True):
+        """ Отправка нажатия клавиш """
         field = self.find(locator)
         if should_be_visible:
             self.wait(timeout).until(EC.visibility_of_element_located(locator))

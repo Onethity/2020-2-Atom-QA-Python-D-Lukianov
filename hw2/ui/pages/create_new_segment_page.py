@@ -1,4 +1,4 @@
-import time
+import pytest
 
 from ui.locators.locators import CreateNewSegmentLocators
 from ui.pages.base_page import BasePage
@@ -7,7 +7,9 @@ from ui.pages.base_page import BasePage
 class CreateNewSegmentPage(BasePage):
     locators = CreateNewSegmentLocators()
 
+    @pytest.mark.UI
     def create_new_segment(self, segment_title: str):
+        """ Создание нового сегмента """
         self.click(self.locators.APPS_AND_GAMES_BUTTON)
         self.click(self.locators.PLAYED_AND_PAID_CHECKBOX)
         self.click(self.locators.ADD_NEW_SEGMENT_BUTTON)

@@ -9,7 +9,8 @@ class MainPageLocators:
 
 
 class DashboardLocators:
-    CREATE_NEW_CAMPAIGN_BUTTON = (By.XPATH, '//div[@class="button-module-textWrapper-3LNyYP" and text()="Создать кампанию"]')
+    CREATE_NEW_CAMPAIGN_BUTTON = (By.XPATH, '//div[@class="button-module-textWrapper-3LNyYP"'
+                                            ' and text()="Создать кампанию"]')
     CREATE_FIRST_CAMPAIGN_BUTTON = (By.XPATH, '//a[@href="/campaign/new"]')
     SEARCH_FIELD = (By.XPATH, '//input[contains(@class, "multiSelectSuggester-module-searchInput-34I1ra")]')
     SEARCH_SUGGESTIONS_BOX = (By.XPATH, '//div[@class="suggesterOptionsList-module-suggesterMode-2L4ezq"]')

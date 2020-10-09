@@ -1,5 +1,4 @@
 import os
-
 import pytest
 
 from ui.locators.locators import CreateNewCampaignLocators
@@ -9,7 +8,9 @@ from ui.pages.base_page import BasePage
 class CreateNewCampaignPage(BasePage):
     locators = CreateNewCampaignLocators()
 
+    @pytest.mark.UI
     def create_new_campaign(self, campaign_title):
+        """ Создание новой кампании """
         self.click(self.locators.TARGET_TRAFFIC_BUTTON)
         self.send_keys(self.locators.URL_FIELD, 'example.com')
         self.send_keys(self.locators.CAMPAIGN_TITLE_FIELD, campaign_title)
@@ -21,6 +22,5 @@ class CreateNewCampaignPage(BasePage):
                        os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'resources', 'teaser_img.jpg')),
                        to_clear=False,
                        should_be_visible=False)
-
         self.click(self.locators.IMAGE_CROPPER_SAVE_BUTTON)
         self.click(self.locators.SAVE_CAMPAIGN_BUTTON)
