@@ -7,7 +7,6 @@ from ui.pages.base_page import BasePage
 class CreateNewSegmentPage(BasePage):
     locators = CreateNewSegmentLocators()
 
-    @pytest.mark.UI
     def create_new_segment(self, segment_title: str):
         """ Создание нового сегмента """
         self.click(self.locators.APPS_AND_GAMES_BUTTON)

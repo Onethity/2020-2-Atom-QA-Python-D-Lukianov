@@ -8,7 +8,6 @@ from ui.pages.base_page import BasePage
 class CreateNewCampaignPage(BasePage):
     locators = CreateNewCampaignLocators()
 
-    @pytest.mark.UI
     def create_new_campaign(self, campaign_title):
         """ Создание новой кампании """
         self.click(self.locators.TARGET_TRAFFIC_BUTTON)
