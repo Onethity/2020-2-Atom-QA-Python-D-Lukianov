@@ -9,6 +9,9 @@ from ui.pages.segments_list_page import SegmentsListPage
 class DashboardPage(BasePage):
     locators = DashboardLocators()
 
+    def get_user_login(self):
+        return self.find(self.locators.EMAIL_BOX).get_attribute('title')
+
     def go_to_new_campaign(self):
         """ Переход на страницу создания кампании """
         try:

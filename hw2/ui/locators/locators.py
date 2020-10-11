@@ -9,6 +9,7 @@ class MainPageLocators:
 
 
 class DashboardLocators:
+    EMAIL_BOX = (By.XPATH, '//div[@class="right-module-userNameWrap-34ibLS"]')
     CREATE_NEW_CAMPAIGN_BUTTON = (By.XPATH, '//div[@class="button-module-textWrapper-3LNyYP"'
                                             ' and text()="Создать кампанию"]')
     CREATE_FIRST_CAMPAIGN_BUTTON = (By.XPATH, '//a[@href="/campaign/new"]')
