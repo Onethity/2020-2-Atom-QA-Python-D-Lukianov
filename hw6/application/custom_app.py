@@ -39,6 +39,12 @@ def stop_app():
         stop_func()
 
 
+@app.errorhandler(404)
+def not_found(e):
+    """ Обработчик 404 ошибки """
+    return jsonify({'status': 'error', 'message': 'not found'}), 404
+
+
 @app.route('/stop')
 def stop():
     """ Эндпоинт для остановки приложения """
@@ -63,17 +69,19 @@ def users_list():
         return jsonify({'status': 'error', 'message': 'unknown error'}), mock_response.status_code
 
 
-@app.route('/user/create', methods=['POST'])
+@app.route('/user/create', methods=['PUT'])
 def create_user():
     """ Создание нового пользователя """
     username = request.form['username']
     try:
-        mock_response = requests.post(MOCK_FULL_URL, data=username)
+        mock_response = requests.put(MOCK_FULL_URL, data=username)
     except requests.exceptions.ConnectionError:
         return jsonify({'status': 'error', 'message': 'users service not available'}), 421
 
-    if mock_response.status_code == 200:
-        return jsonify({'status': 'ok'})
+    if mock_response.status_code == 201:
+        return '', 200  # При успешном запросе не должно быть тела ответа на PUT запрос
+    elif mock_response.status_code == 204:
+        return '', 204
     elif mock_response.status_code == 500:
         return jsonify({'status': 'error', 'message': 'users service internal error'}), 424
     else:
@@ -154,7 +162,8 @@ def check_auth(username):
     elif mock_response.status_code == 403:
         return jsonify({'status': 'error', 'message': 'User does not exist'}), mock_response.status_code
     elif mock_response.status_code == 400:
-        return jsonify({'status': 'error', 'message': 'Username in url and in header must be the same'}), mock_response.status_code
+        return jsonify(
+            {'status': 'error', 'message': 'Username in url and in header must be the same'}), mock_response.status_code
     else:
         return jsonify({'status': 'error', 'message': 'unknown error'}), mock_response.status_code
 
