@@ -30,7 +30,7 @@ class MockHttpProcessor(BaseHTTPRequestHandler):
                 self._set_headers(status_code=500)
 
         elif self.path == '/timeout':  # Запрос с искусственным таймаутом
-            time.sleep(5)
+            time.sleep(2)
             self._set_headers(status_code=200)
 
         elif self.path == '/500':  # Запрос, который возвращает 500
@@ -41,17 +41,7 @@ class MockHttpProcessor(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """ Обработчик POST запросов """
-        if self.path == '/':  # При POST запросе на корень добавляем нового пользователя
-            username = self._get_request_data()
-
-            try:
-                db = DatabaseConnection()
-                db.add_user(username)
-                self._set_headers()
-            except DatabaseError:
-                self._set_headers(status_code=500)
-
-        elif self.path == '/auth':  # Проверка авторизации
+        if self.path == '/auth':  # Проверка авторизации
             auth_header = self.headers.get('Authorization')
             if not auth_header:  # Если нет хедера с авторизацией
                 self._set_headers(status_code=412)
@@ -84,9 +74,27 @@ class MockHttpProcessor(BaseHTTPRequestHandler):
         else:
             self._set_headers(status_code=404)
 
+    def do_PUT(self):
+        if self.path == '/':
+            username = self._get_request_data()  # При PUT запросе на корень добавляем нового пользователя, если его еще нет
+            try:
+                db = DatabaseConnection()
+                users = db.get_users()
+                if username not in users:
+                    db.add_user(username)
+                    self._set_headers(status_code=201)
+                else:
+                    self._set_headers(status_code=204)
+            except DatabaseError:
+                self._set_headers(status_code=500)
+
+        else:
+            self._set_headers(status_code=404)
+
 
 class UsersHTTPServer:
     """ Moсk HTTP сервер"""
+
     def __init__(self, host, port):
         self.host = host
         self.port = port
@@ -113,6 +121,7 @@ def start_mock(host, port):
     server.start()
 
     return server
+
 
 if __name__ == '__main__':
     start_mock(host=CONFIG['mock']['host'], port=CONFIG['mock']['port'])
