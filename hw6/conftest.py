@@ -34,6 +34,7 @@ def http_client(config):
     return HTTPClient(
         host=config['app']['host'],
         port=config['app']['port'],
+        print_json=True  # Вывод ответа на экран в формате JSON
     )
 
 

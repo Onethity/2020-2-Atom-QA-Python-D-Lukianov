@@ -10,9 +10,10 @@ RETRY_COUNT = 3
 class HTTPClient:
     """ HTTP клиент на основе сокетов """
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, print_json=True):
         self.host = host
         self.port = port
+        self.print_json = print_json  # Нужно ли выводить на экран ответ на запрос
 
     def get(self, endpoint, headers={}):
         """ GET запрос """
@@ -68,7 +69,8 @@ class HTTPClient:
         self._stop_socket()
 
         # По условию задания необходимо вывести ответ на экран
-        print(response.body)
+        if self.print_json:
+            print(response)
 
         return response
 
@@ -84,9 +86,16 @@ class HTTPClient:
 
         data = ''.join(total_data).splitlines()
 
+        headers_row = data[1:-2]
+        headers = {}
+        for line in headers_row:
+            header = line.split(':', maxsplit=1)
+            headers.update({header[0]: header[1][1:]})
+
         response = Response(
             body=data[-1],
-            status_code=int(data[0].split(' ')[1])
+            status_code=int(data[0].split(' ')[1]),
+            headers=headers,
         )
 
         return response
