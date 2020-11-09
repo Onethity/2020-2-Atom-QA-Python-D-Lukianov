@@ -1,3 +1,4 @@
+import json
 import socket
 import urllib.parse
 
@@ -13,28 +14,49 @@ class HTTPClient:
         self.host = host
         self.port = port
 
-    def get(self, endpoint):
+    def get(self, endpoint, headers={}):
         """ GET запрос """
         request = f'GET {endpoint} HTTP/1.1\r\n' \
-                  f'Host: {self.host}:{self.port}\r\n' \
-                  f'\r\n'
+                  f'Host: {self.host}:{self.port}\r\n'
+        request += self._add_headers_to_request(headers)
         return self._send_request(request)
 
-    def post(self, endpoint, data: dict):
+    def post(self, endpoint, data={}, headers={}):
         """ POST запрос """
-        encoded_data = urllib.parse.urlencode(data)
+        if data == {}:
+            encoded_data = ''
+        else:
+            encoded_data = urllib.parse.urlencode(data)
+
         request = f'POST {endpoint} HTTP/1.1\r\n' \
                   f'Host: {self.host}:{self.port}\r\n' \
                   f'Content-Type: application/x-www-form-urlencoded\r\n' \
-                  f'Content-Length: {len(encoded_data)}\r\n' \
-                  f'\r\n' \
-                  f'{encoded_data}'
+                  f'Content-Length: {len(encoded_data)}\r\n'
+        request += self._add_headers_to_request(headers)
+        request += f'{encoded_data}'
 
         return self._send_request(request)
 
-    def delete(self, endpoint):
+    def put(self, endpoint, data={}, headers={}):
+        """ PUT запрос """
+        if data == {}:
+            encoded_data = ''
+        else:
+            encoded_data = urllib.parse.urlencode(data)
+
+        request = f'PUT {endpoint} HTTP/1.1\r\n' \
+                  f'Host: {self.host}:{self.port}\r\n' \
+                  f'Content-Type: application/x-www-form-urlencoded\r\n' \
+                  f'Content-Length: {len(encoded_data)}\r\n'
+        request += self._add_headers_to_request(headers)
+        request += f'{encoded_data}'
+
+        return self._send_request(request)
+
+    def delete(self, endpoint, headers={}):
         request = f'DELETE {endpoint} HTTP/1.1\r\n' \
-                  f'Host: {self.host}:{self.port}\r\n\r\n'
+                  f'Host: {self.host}:{self.port}\r\n'
+        request += self._add_headers_to_request(headers)
 
         return self._send_request(request)
 
@@ -45,7 +67,9 @@ class HTTPClient:
         response = self._get_response()
         self._stop_socket()
 
-        print(response.json())
+        # По условию задания необходимо вывести ответ на экран
+        print(response.body)
+
         return response
 
     def _get_response(self):
@@ -70,7 +94,7 @@ class HTTPClient:
     def _init_socket(self):
         """ Инициализация сокета """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.settimeout(0.5)
+        self.socket.settimeout(1.5)
 
         count = 0
         while count < RETRY_COUNT:
@@ -84,3 +108,11 @@ class HTTPClient:
     def _stop_socket(self):
         """ Остановка сокета """
         self.socket.close()
+
+    def _add_headers_to_request(self, headers):
+        """ Добавление заголовков к запросу """
+        request = ''
+        for header_name, header_value in headers.items():
+            request += f'{header_name}: {header_value}\r\n'
+        request += '\r\n'
+        return request
