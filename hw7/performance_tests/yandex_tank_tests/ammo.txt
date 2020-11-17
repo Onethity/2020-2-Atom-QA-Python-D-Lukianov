@@ -1,0 +1,18 @@
+[Connection: Close]
+[Host: 127.0.0.1:4215]
+/shareware
+
+[Connection: Close]
+[Host: 127.0.0.1:4215]
+[Authorization: Basic RGltYToxMjM=]
+/profile
+
+[Connection: Close]
+[Host: 127.0.0.1:4215]
+[Authorization: Basic RGltYToxMjM=]
+/photo
+
+[Connection: Close]
+[Host: 127.0.0.1:4215]
+[Authorization: Basic RGltYToxMjM=]
+/album

@@ -1,0 +1,20 @@
+# Линейная нагрузка от 1 до 5 RPS 30 секунд
+overload:
+  enabled: true
+  token_file: /var/loadtest/token.txt
+  package: yandextank.plugins.DataUploader
+  job_name: D_Lukianov_line
+  job_dsc: test_atom_line
+
+phantom:
+  enabled: true
+  ammofile: /var/loadtest/ammo.txt
+  address: 127.0.0.1:4215
+  load_profile:
+    load_type: rps
+    schedule: line(1, 5, 30)
+
+telegraf:
+  enabled: true
+  package: yandextank.plugins.Telegraf
+  config: /var/loadtest/monitoring.xml
