@@ -11,3 +11,5 @@ class MainPage(BasePage):
         self.send_keys(self.locators.EMAIL_FIELD, login)
         self.send_keys(self.locators.PASSWORD_FIELD, password)
         self.click(self.locators.LOGIN_BUTTON)
+
+

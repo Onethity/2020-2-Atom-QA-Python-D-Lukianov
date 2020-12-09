@@ -1,0 +1,75 @@
+# Файл для запуска системы (селеноид, приложение, база, мок)
+version: '2.1'
+
+networks:
+  selenoid:
+    external:
+      name: selenoid
+
+services:
+  myapp:
+    image: myapp
+    environment:
+      TZ: "Europe/Moscow"  # Прокидываем timezone, чтобы правильно логи читались
+    networks:
+      - selenoid
+    volumes:
+      - ./app/config:/config
+    command: /app/myapp --config=/config/app_config.txt
+    ports:
+    - "4515:4515"
+    depends_on:
+      db:
+        condition: service_healthy
+      vk_id_mock:
+        condition: service_healthy
+      selenoid:
+        condition: service_started
+
+  vk_id_mock:
+    build: mock
+    networks:
+      - selenoid
+    ports:
+      - "4516:4516"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4516/is_mock_up" ]
+      timeout: 10s
+      retries: 5
+
+  db:
+    image: mysql:5.7
+    networks:
+      - selenoid
+    environment:
+      MYSQL_DATABASE: technoatom
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_USER: test_qa
+      MYSQL_PASSWORD: qa_test
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./app/db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "-uroot", "-ppass", "ping", "-h", "127.0.0.1" ]
+      timeout: 5s
+      retries: 15
+
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    networks:
+      - selenoid
+    volumes:
+      - ./selenoid:/etc/selenoid
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: [ "-conf", "/etc/selenoid/browsers.json", "-container-network", "selenoid", "-limit", "10" ]
+    ports:
+      - "4444:4444"
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui
+    networks:
+      - selenoid
+    ports:
+      - "8090:8080"  # Прокидываем UI на 8090, потому что на 8080 стоит дженкинс
+    command: [ "--selenoid-uri", "http://selenoid:4444" ]

@@ -1,0 +1,10 @@
+pytest
+pytest-xdist
+selenium
+webdriver_manager
+allure-pytest
+sqlalchemy
+bs4
+lxml
+pymysql
+docker
