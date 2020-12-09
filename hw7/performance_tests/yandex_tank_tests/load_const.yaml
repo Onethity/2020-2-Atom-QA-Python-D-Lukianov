@@ -1,0 +1,20 @@
+# Постоянная нагрузка 2 RPS 30 секунд
+overload:
+  enabled: true
+  token_file: /var/loadtest/token.txt
+  package: yandextank.plugins.DataUploader
+  job_name: D_Lukianov_const
+  job_dsc: test_atom_const
+
+phantom:
+  enabled: true
+  ammofile: /var/loadtest/ammo.txt
+  address: 127.0.0.1:4215
+  load_profile:
+    load_type: rps
+    schedule: const(2, 30)
+
+telegraf:
+  enabled: true
+  package: yandextank.plugins.Telegraf
+  config: /var/loadtest/monitoring.xml
